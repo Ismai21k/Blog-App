@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const {connectDB} = require('./config/db');
 
+
 // Load environment variables
 dotenv.config();
 
@@ -16,6 +17,7 @@ dotenv.config();
 const postRoutes = require('./routes/postRoute');
 const categoryRoutes = require('./routes/categoryRoute');
 const userRoutes =  require('./routes/userRoute');
+const upload = require('./config/multer');
 
 // Initialize Express app
 const app = express();
@@ -23,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin:"*"})); // Enable CORS for all origins
 // app.use(cors({ origin:'https://blog-app-mu-cyan.vercel.app'}));
 
 app.use(express.json());

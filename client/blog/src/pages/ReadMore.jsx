@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { postService } from "../services/api.jsx"
 import { Navbar } from "../components/Navbar.jsx"
 import { Footer } from "../components/Footer.jsx"
@@ -11,7 +11,11 @@ const ReadMore = () => {
   const [post, setPost] = useState(null)
   const [comment, setComment] = useState("")
   const [loading, setLoading] = useState(true)
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL // your backend URL
+  const storedUser = localStorage.getItem("user")
+  const user = storedUser ? JSON.parse(storedUser) : null
+  const navigate = useNavigate()
+  console.log("Current User:", user)
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -38,6 +42,11 @@ const ReadMore = () => {
     if (!comment.trim()) return
 
     try {
+      if(user === null) {
+        alert("Please Login to post a comment")
+        navigate("/login")
+        return
+      }
       const res = await postService.addComment(id, comment)
       setPost({ ...post, comments: [...post.comments, res.comment] })
       setComment("")
@@ -83,7 +92,7 @@ const ReadMore = () => {
           <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden mb-8">
             <div className="aspect-video w-full overflow-hidden">
               <img
-                src={`https://blog-app-dbhw.onrender.com/uploads/${post.featuredImage}`}
+                src={`${post.featuredImage}`}
                 alt={post.title}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
